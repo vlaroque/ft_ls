@@ -2,19 +2,40 @@
 #include <sys/types.h>
 #include <dirent.h>
 #include <stdio.h>
+#include <assert.h>
 #include <string.h>
+
+#include "flags.h"
+
 
 typedef struct environment_s
 {
-	char *path;
-	bool long_listing_option; /* -l */
-	bool recursive_option;    /* -R */
-	bool all_option;          /* -a */
-	bool reverse_option;      /* -r */
-	bool time_sorting_option; /* -t */
+	char  *path;
+	flags  flags;
+	bool  long_listing_option; /* -l */
+	bool  recursive_option;    /* -R */
+	bool  all_option;          /* -a */
+	bool  reverse_option;      /* -r */
+	bool  time_sorting_option; /* -t */
 } environment_t;
 
 environment_t g_env = {0};
+
+//void recursive_traversal(char *path, int flags)
+//{
+//	array_of_files = list_directory(path, flags);
+//
+//	print_list_of_files(array_of_files);
+//
+//	/* attention l'ordre des dossiers est impacté par -r ou -t */
+//	for ( file in array_of_files )
+//	{
+//		if ( file is directory )
+//			recursive_traversal(file->full_path, flags);
+//	}
+//
+//	return;
+//}
 
 char *d_type_to_str(unsigned char type)
 {
@@ -28,7 +49,7 @@ char *d_type_to_str(unsigned char type)
 
 		case DT_DIR:
 			return "directory";
-		
+
 		case DT_FIFO:
 			return "fifo";
 
@@ -40,13 +61,43 @@ char *d_type_to_str(unsigned char type)
 
 		case DT_SOCK:
 			return "socket";
-			
+
 		case DT_UNKNOWN:
 			return "unknown";
 
 		default:
 			return "error"; 
 	}
+}
+
+bool parse_short_option(environment_t *env, char* option_str)
+{
+	assert (option_str != NULL);
+
+	for (int i = 0; option_str[i] != '\0'; i++)
+	{
+		switch (option_str[i])
+		{
+			case 'l':
+				SET_FLAG(env->flags, L_LLO);
+				break;
+			case 'R':
+				SET_FLAG(env->flags, L_REC);
+				break;
+			case 'a':
+				SET_FLAG(env->flags, L_ALL);
+				break;
+			case 'r':
+				SET_FLAG(env->flags, L_REV);
+				break;
+			case 't':
+				SET_FLAG(env->flags, L_TMS);
+				break;
+			default:
+				return false;
+		}
+	}
+	return true;
 }
 
 bool parse_args(environment_t *env, int ac, char **av)
@@ -66,29 +117,7 @@ bool parse_args(environment_t *env, int ac, char **av)
 		}
 		else if ( av[i][0] == '-' )
 		{
-			for (int j = 1; av[i][j] != '\0'; j++)
-			{
-				switch (av[i][j])
-				{
-					case 'l':
-						res.long_listing_option = true;
-						break;
-					case 'R':
-						res.recursive_option = true;
-						break;
-					case 'a':
-						res.all_option = true;
-						break;
-					case 'r':
-						res.reverse_option = true;
-						break;
-					case 't':
-						res.time_sorting_option = true;
-						break;
-					default:
-						return false;
-				}
-			}
+			parse_short_option(env, &av[i][1]);
 		}
 		else
 		{
@@ -97,11 +126,8 @@ bool parse_args(environment_t *env, int ac, char **av)
 	}
 
 	*env = res;
-
 	return true;
 }
-
-void 
 
 int main(int ac, char **av)
 {
