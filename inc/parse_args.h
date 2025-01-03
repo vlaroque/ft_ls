@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 #include "entries_list.h"
-#include "print_line.h"
+#include "stream.h"
 
 typedef int flags;
 

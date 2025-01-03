@@ -11,7 +11,7 @@
 
 #include "debug.h"
 #include "entries_list.h"
-#include "print_line.h"
+#include "stream.h"
 #include "parse_args.h"
 #include "entries_list_sort.h"
 

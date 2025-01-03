@@ -18,7 +18,7 @@ CFLAGS = -Wextra -Werror -Wall -g
 
 # SOURCES
 
-SRC_FILES = main.c debug.c entries_list.c print_line.c parse_args.c entries_list_sort.c
+SRC_FILES = main.c debug.c entries_list.c stream.c parse_args.c entries_list_sort.c
 
 # PATH
 
