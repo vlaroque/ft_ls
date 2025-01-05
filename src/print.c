@@ -31,7 +31,7 @@ static char *entry_normal_suffix_char(entry_t *entry, environment_t *env)
 
 static void print_normal_format_line(entry_t *entry, environment_t *env)
 {
-	stream_cat(env->stream, entry->filename);
+	stream_cat(env->stream, entry->printable_filename);
 	stream_cat_end_of_line(env->stream, entry_normal_suffix_char(entry, env));
 }
 
@@ -155,7 +155,7 @@ static void print_long_format_line(entry_t *entry, environment_t *env)
 	char permissions_str[11] = {0};
 
 	struct passwd *passwd = getpwuid(entry->stats.st_uid);
-	struct group *group = getgrgid(entry->stats.st_uid);
+	struct group *group = getgrgid(entry->stats.st_gid);
 
 	set_permissions_str(permissions_str, entry->stats.st_mode);
 
@@ -182,7 +182,7 @@ static void print_long_format_line(entry_t *entry, environment_t *env)
 	print_time(entry, env);
 	stream_cat(env->stream, " ");
 
-	stream_cat(env->stream, entry->filename);
+	stream_cat(env->stream, entry->printable_filename);
 	stream_cat(env->stream, entry_normal_suffix_char(entry, env));
 	links_handle(entry, env);
 	stream_cat_end_of_line(env->stream, "");

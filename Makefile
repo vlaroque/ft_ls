@@ -18,7 +18,7 @@ CFLAGS = -Wextra -Werror -Wall -g
 
 # SOURCES
 
-SRC_FILES = main.c debug.c entries_list.c stream.c parse_args.c entries_list_sort.c files_exploration.c path_operations.c print.c print_filename.c
+SRC_FILES = main.c entries_list.c stream.c parse_args.c entries_list_sort.c files_exploration.c path_operations.c print.c print_filename.c
 LIBFT_SRCS := $(shell find libft -name '*.c')
 
 # PATH

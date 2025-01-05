@@ -7,6 +7,7 @@
 
 #include "entries_list.h"
 #include "path_operations.h"
+#include "print_filename.h"
 #include "libft.h"
 
 bool entry_list_from_path(entry_t **entry_out, char *path)
@@ -95,13 +96,24 @@ bool entry_list_push_from_allocated_path(entry_list_t *list, char *path)
 
 	new_entry->full_path = NULL;
 	new_entry->filename = NULL;
-	//new_entry->printable_filename = NULL;
+	new_entry->printable_filename = NULL;
 	new_entry->next = NULL;
 	new_entry->prev = NULL;
 	new_entry->stats = tmp_stats;
 	new_entry->full_path = path;
 	new_entry->filename = find_file_name(new_entry->full_path);
-	//new_entry->printable_filename = escape_and_quote(new_entry->filename);
+	if ( new_entry->filename == NULL )
+	{
+		free(new_entry);
+		return false;
+	}
+	new_entry->printable_filename = dump_escaped_filename(new_entry->filename);
+	if ( new_entry->printable_filename == NULL )
+	{
+		free(new_entry->full_path);
+		free(new_entry);
+		return false;
+	}
 
 	entry_list_push_entry(list, new_entry);
 

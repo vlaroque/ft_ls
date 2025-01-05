@@ -8,7 +8,6 @@
 
 #include "libft.h"
 
-#include "debug.h"
 #include "entries_list.h"
 #include "stream.h"
 #include "parse_args.h"
