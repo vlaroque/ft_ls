@@ -89,6 +89,21 @@ int compare_by_name(entry_t *entry_a, entry_t *entry_b)
 
 	return ft_strcmp(entry_a->filename, entry_b->filename);
 }
+
+int compare_by_time(entry_t *entry_a, entry_t *entry_b)
+{
+	assert(entry_a != NULL);
+	assert(entry_b != NULL);
+
+	if (entry_a->stats.st_mtime > entry_b->stats.st_mtime)
+		return -1;
+	else if (entry_a->stats.st_mtime < entry_b->stats.st_mtime)
+		return 1;
+	
+	/* if the time is the same, we compare by name ;) */
+	return compare_by_name(entry_a, entry_b);
+}
+
 /*
 
 static const char *skip_heading_punctuation(const char *filename)
@@ -114,7 +129,7 @@ int compare_by_name(entry_t *entry_a, entry_t *entry_b)
 
 	if ( ft_strcmp(entry_a->filename, ".") == 0 || strcmp(entry_a->filename, "..") == 0 )
 		return -1;
-	
+
 	if ( ft_strcmp(entry_b->filename, ".") == 0 || strcmp(entry_b->filename, "..") == 0 )
 		return 1;
 

@@ -6,6 +6,7 @@
 #include <assert.h>
 
 #include "entries_list.h"
+#include "path_operations.h"
 #include "libft.h"
 
 bool entry_list_from_path(entry_t **entry_out, char *path)
@@ -88,17 +89,19 @@ bool entry_list_push_from_allocated_path(entry_list_t *list, char *path)
 	}
 
 	entry_t *new_entry = malloc(sizeof(entry_t));
-	new_entry->full_path = NULL;
-	new_entry->filename = NULL;
-	new_entry->next = NULL;
-	new_entry->prev = NULL;
-	new_entry->stats = tmp_stats;
 
 	if ( new_entry == NULL )
 		return false; // to manage this one !
 
+	new_entry->full_path = NULL;
+	new_entry->filename = NULL;
+	//new_entry->printable_filename = NULL;
+	new_entry->next = NULL;
+	new_entry->prev = NULL;
+	new_entry->stats = tmp_stats;
 	new_entry->full_path = path;
 	new_entry->filename = find_file_name(new_entry->full_path);
+	//new_entry->printable_filename = escape_and_quote(new_entry->filename);
 
 	entry_list_push_entry(list, new_entry);
 
@@ -135,6 +138,9 @@ void entry_list_free(entry_list_t *entry_list)
 	while ( entry != NULL )
 	{
 		free(entry->full_path);
+		free(entry->printable_filename);
+		entry_t *entry_to_free = entry;
 		entry = entry->next;
+		free(entry_to_free);
 	}
 }

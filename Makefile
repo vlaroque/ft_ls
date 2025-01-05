@@ -18,7 +18,8 @@ CFLAGS = -Wextra -Werror -Wall -g
 
 # SOURCES
 
-SRC_FILES = main.c debug.c entries_list.c stream.c parse_args.c entries_list_sort.c
+SRC_FILES = main.c debug.c entries_list.c stream.c parse_args.c entries_list_sort.c files_exploration.c path_operations.c print.c print_filename.c
+LIBFT_SRCS := $(shell find libft -name '*.c')
 
 # PATH
 
@@ -48,9 +49,9 @@ $(NAME): $(OBJ_FILES_FULL_PATH) $(LIBFT)
 
 -include $(DEPENDS)
 
-$(LIBFT):
+$(LIBFT): $(LIBFT_SRCS)
 	@echo "\t\tMaking Libft !"
-	@make -C libft
+	@$(MAKE) -C libft
 	@echo "\t\tLibft built successfully !"
 
 
