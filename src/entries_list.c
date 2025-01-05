@@ -10,21 +10,6 @@
 #include "print_filename.h"
 #include "libft.h"
 
-void debug_entry_list(entry_list_t *list)
-{
-	printf("debugging entry list\n");
-
-	entry_t *entry = list->first;
-
-	while ( entry != NULL )
-	{
-		printf("\tEntry file '%s' path '%s'\n", entry->filename, entry->full_path);
-		if (entry->next != NULL)
-			assert(entry->next->prev == entry);
-
-		entry = entry->next;
-	}
-}
 
 static bool entry_list_push_entry(entry_list_t *list, entry_t *entry)
 {
@@ -93,6 +78,7 @@ bool entry_list_push_from_allocated_path(entry_list_t *list, char *path)
 	new_entry->stats = tmp_stats;
 	new_entry->full_path = path;
 	new_entry->filename = find_file_name(new_entry->full_path);
+	new_entry->full_path_option = list->full_path_option;
 	if ( new_entry->filename == NULL )
 	{
 		free(new_entry);
@@ -105,6 +91,8 @@ bool entry_list_push_from_allocated_path(entry_list_t *list, char *path)
 		free(new_entry);
 		return false;
 	}
+	
+	list->directory_size += new_entry->stats.st_blocks;
 
 	entry_list_push_entry(list, new_entry);
 

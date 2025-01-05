@@ -9,6 +9,7 @@
 #include "entries_list_sort.h"
 #include "path_operations.h"
 #include "print.h"
+#include "print_filename.h"
 
 static bool is_hidden_file(char *filename)
 {
@@ -103,14 +104,11 @@ void recursive_traversal(char *path, environment_t *env)
 	
 	if (env->multiple_files || IS_FLAG_SET(env->flags, L_REC))
 	{
-		stream_cat(env->stream, path);
+		stream_out_filename(env->stream, path);
 		stream_cat_end_of_line(env->stream, ":");
 	}
 
-	if ( IS_FLAG_SET(env->flags, L_TMS))
-		entries_list_qsort(entries.first, entries.last, compare_by_time);
-	else
-		entries_list_qsort(entries.first, entries.last, compare_by_name);
+	entries_list_qsort(entries.first, entries.last, env->comparison_function);
 
 	print_entries_list(&entries, env);
 
@@ -118,6 +116,7 @@ void recursive_traversal(char *path, environment_t *env)
 	{
 		explore_subdirectories(&entries, env);
 	}
+	entry_list_free(&entries);
 }
 
 // bool explore_initial_entries(entry_list_t)

@@ -46,3 +46,19 @@ void debug_env(environment_t *env)
 	printf("muliple_files = %b\n", env->multiple_files);
 	debug_entry_list(&env->root_entries_list);
 }
+
+void debug_entry_list(entry_list_t *list)
+{
+	printf("debugging entry list\n");
+
+	entry_t *entry = list->first;
+
+	while ( entry != NULL )
+	{
+		printf("\tEntry file '%s' path '%s'\n", entry->filename, entry->full_path);
+		if (entry->next != NULL)
+			assert(entry->next->prev == entry);
+
+		entry = entry->next;
+	}
+}

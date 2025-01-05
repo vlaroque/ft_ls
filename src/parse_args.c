@@ -43,6 +43,10 @@ bool parse_short_option(environment_t *env, char *option_str)
 
 bool parse_args(environment_t *env, int ac, char **av)
 {
+	bool target_found = false;
+
+	env->root_entries_list.full_path_option = true;
+
 	for (int i = 1; i < ac; i++)
 	{
 		if (av[i][0] == '-' && av[i][1] == '-')
@@ -59,16 +63,26 @@ bool parse_args(environment_t *env, int ac, char **av)
 		else
 		{
 			entry_list_push_from_weak_path(&env->root_entries_list, av[i]);
+			target_found = true;
 		}
 	}
 
-	if ( entry_list_is_empty(&env->root_entries_list) )
+	if ( !target_found )
 		entry_list_push_from_weak_path(&env->root_entries_list, ".");
 
 	if ( env->root_entries_list.first == env->root_entries_list.last )
 		env->multiple_files = false;
 	else
 		env->multiple_files = true;
+
+	if ( IS_FLAG_SET(env->flags, L_TMS) && IS_FLAG_SET(env->flags, L_REV))
+		env->comparison_function = compare_by_time_reverse;
+	else if ( IS_FLAG_SET(env->flags, L_TMS) )
+		env->comparison_function = compare_by_time_more_precise;
+	else if ( IS_FLAG_SET(env->flags, L_REV) )
+		env->comparison_function = compare_by_name_reverse;
+	else
+		env->comparison_function = compare_by_name;
 
 	env->first_line = true;
 

@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include "entries_list.h"
 #include "stream.h"
+#include "entries_list_sort.h"
 
 typedef int flags;
 
@@ -14,6 +15,7 @@ typedef struct environment_s
 	stream_out_t *stream;
 	bool multiple_files;
 	bool first_line;
+	cmp_func_t comparison_function;
 } environment_t;
 
 

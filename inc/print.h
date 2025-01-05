@@ -5,5 +5,7 @@
 #include "parse_args.h"
 
 void print_entries_list(entry_list_t *entries, environment_t *env);
+void print_long_format_line(entry_t *entry, environment_t *env);
+void print_normal_format_line(entry_t *entry, environment_t *env);
 
 #endif /* __PRINT_H */

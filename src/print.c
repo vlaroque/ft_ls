@@ -6,16 +6,19 @@
 #include <grp.h>
 #include <time.h>
 #include <unistd.h>
+#include <stdio.h>
 
 #include "libft.h"
+#include "print_filename.h"
 
+/*
 static char *entry_normal_suffix_char(entry_t *entry, environment_t *env)
 {
 	if (S_ISDIR(entry->stats.st_mode))
 		return "/";
-	else if (S_ISLNK(entry->stats.st_mode) )
+	else if (S_ISLNK(entry->stats.st_mode))
 	{
-		if ( IS_FLAG_SET(env->flags, L_LLO))
+		if (IS_FLAG_SET(env->flags, L_LLO))
 			return "";
 		else
 			return "@";
@@ -28,11 +31,12 @@ static char *entry_normal_suffix_char(entry_t *entry, environment_t *env)
 		return "|";
 	return "";
 }
+*/
 
-static void print_normal_format_line(entry_t *entry, environment_t *env)
+void print_normal_format_line(entry_t *entry, environment_t *env)
 {
-	stream_cat(env->stream, entry->printable_filename);
-	stream_cat_end_of_line(env->stream, entry_normal_suffix_char(entry, env));
+	stream_cat_end_of_line(env->stream, entry->printable_filename);
+	//stream_cat_end_of_line(env->stream, entry_normal_suffix_char(entry, env));
 }
 
 void set_permissions_str(char str[11], mode_t mode)
@@ -103,10 +107,12 @@ static void print_size(entry_t *entry, environment_t *env)
 //"Dec  1  2020"
 //"Dec 26 07:49"
 
+#define SIX_MOUNTH_IN_SECONDS (6 * 30 * 24 * 60 * 60)
 static void print_time(entry_t *entry, environment_t *env)
 {
 	time_t now = time(NULL);
 	char *time_str = ctime(&entry->stats.st_mtime);
+
 
 	stream_add_char(env->stream, '\t');
 	stream_add_char(env->stream, time_str[4]);
@@ -117,8 +123,9 @@ static void print_time(entry_t *entry, environment_t *env)
 	stream_add_char(env->stream, time_str[9]);
 	stream_add_char(env->stream, ' ');
 
-	if (entry->stats.st_mtime < (now - 15778476) || entry->stats.st_mtime < (now + 15778476))
+	if (entry->stats.st_mtime > (now - SIX_MOUNTH_IN_SECONDS) && entry->stats.st_mtime < (now + SIX_MOUNTH_IN_SECONDS))
 	{
+		///printf("%s, print hour now %ld file: %ld\n", entry->filename, now, entry->stats.st_mtime);
 		stream_add_char(env->stream, time_str[11]);
 		stream_add_char(env->stream, time_str[12]);
 		stream_add_char(env->stream, time_str[13]);
@@ -127,11 +134,16 @@ static void print_time(entry_t *entry, environment_t *env)
 	}
 	else
 	{
+		//printf("%s, print year year now %ld file: %ld\n", entry->filename, now, entry->stats.st_mtime);
 		stream_add_char(env->stream, ' ');
 		stream_add_char(env->stream, time_str[20]);
 		stream_add_char(env->stream, time_str[21]);
 		stream_add_char(env->stream, time_str[22]);
 		stream_add_char(env->stream, time_str[23]);
+	}
+	if (strcmp(entry->filename, "testtest") == 0)
+	{
+		//printf("now %ld file: %ld", now, entry->stats.st_mtime);
 	}
 }
 
@@ -146,11 +158,11 @@ void links_handle(entry_t *entry, environment_t *env)
 	{
 		link_target[len] = '\0';
 		stream_cat(env->stream, " -> ");
-		stream_cat(env->stream, link_target);
+		stream_out_filename(env->stream, link_target);
 	}
 }
 
-static void print_long_format_line(entry_t *entry, environment_t *env)
+void print_long_format_line(entry_t *entry, environment_t *env)
 {
 	char permissions_str[11] = {0};
 
@@ -183,7 +195,7 @@ static void print_long_format_line(entry_t *entry, environment_t *env)
 	stream_cat(env->stream, " ");
 
 	stream_cat(env->stream, entry->printable_filename);
-	stream_cat(env->stream, entry_normal_suffix_char(entry, env));
+	//stream_cat(env->stream, entry_normal_suffix_char(entry, env));
 	links_handle(entry, env);
 	stream_cat_end_of_line(env->stream, "");
 }
@@ -191,6 +203,17 @@ static void print_long_format_line(entry_t *entry, environment_t *env)
 void print_entries_list(entry_list_t *entries, environment_t *env)
 {
 	entry_t *one_entry = entries->first;
+
+	if (IS_FLAG_SET(env->flags, L_LLO))
+	{
+		char *size = ft_ulongtoa(entries->directory_size / 2);
+		if (size != NULL)
+		{
+			stream_cat(env->stream, "total ");
+			stream_cat_end_of_line(env->stream, size);
+			free(size);
+		}
+	}
 
 	while (one_entry != NULL)
 	{
@@ -201,5 +224,5 @@ void print_entries_list(entry_list_t *entries, environment_t *env)
 
 		one_entry = one_entry->next;
 	}
-	//stream_cat_end_of_line(env->stream, "");
+	// stream_cat_end_of_line(env->stream, "");
 }

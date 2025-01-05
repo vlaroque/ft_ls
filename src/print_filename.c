@@ -5,6 +5,7 @@
 #include <assert.h>
 
 #include "libft.h"
+#include "stream.h"
 
 
 bool copy_as_single_char_in_printable_filename(char c)
@@ -54,6 +55,7 @@ bool char_need_quotes(char c)
 	     || c == '{'
 	     || c == '}'
 	     || c == '~'
+	     || c == '/' /* for paths at the end */
 		 )
 		return false;
 	
@@ -166,7 +168,7 @@ char *dump_escaped_filename(char *original_filename)
 
 			if (current_parsed_char == '\'')
 			{
-				ft_strcpy(&buffer[j], "''");
+				ft_strcpy(&buffer[j], "\\'");
 				j += 2;
 			}
 			else
@@ -187,4 +189,49 @@ char *dump_escaped_filename(char *original_filename)
 	buffer[j] = '\0';
 	return ft_strdup(buffer);
 
+}
+
+void stream_out_filename(stream_out_t *stream, char *full_path)
+{
+	bool oct_mode = false;
+	bool need_quotes = string_need_quotes(full_path);
+	size_t i = 0; // in fn id
+	
+	if ( need_quotes == true )
+		stream_add_char(stream, '\'');
+
+	while (full_path[i] != '\0' )
+	{
+		char current_parsed_char = full_path[i];
+
+		if (char_need_to_be_escaped(current_parsed_char))
+		{
+			if ( oct_mode == false )
+			{
+				stream_cat(stream, "'$'");
+				oct_mode = true;
+			}
+
+			char buff[5] = {0};
+			add_escapable_char(current_parsed_char, buff);
+			stream_cat(stream, buff);
+		}
+		else
+		{
+			if ( oct_mode )
+			{
+				stream_cat(stream, "''");
+				oct_mode=false;
+			}
+
+			if (current_parsed_char == '\'')
+				stream_cat(stream, "\\'");
+			else
+				stream_add_char(stream, current_parsed_char);
+		}
+		i++;
+	}
+
+	if ( need_quotes == true )
+		stream_add_char(stream, '\'');
 }

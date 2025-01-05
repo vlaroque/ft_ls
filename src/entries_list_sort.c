@@ -90,7 +90,15 @@ int compare_by_name(entry_t *entry_a, entry_t *entry_b)
 	assert(entry_a != NULL);
 	assert(entry_b != NULL);
 
+	if (entry_a->full_path_option)
+		return ft_strcmp(entry_a->full_path, entry_b->full_path);
+
 	return ft_strcmp(entry_a->filename, entry_b->filename);
+}
+
+int compare_by_name_reverse(entry_t *entry_a, entry_t *entry_b)
+{
+	return (-compare_by_name(entry_a, entry_b));
 }
 
 int compare_by_time(entry_t *entry_a, entry_t *entry_b)
@@ -107,40 +115,24 @@ int compare_by_time(entry_t *entry_a, entry_t *entry_b)
 	return compare_by_name(entry_a, entry_b);
 }
 
-/*
-
-static const char *skip_heading_punctuation(const char *filename)
+int compare_by_time_more_precise(entry_t *entry_a, entry_t *entry_b)
 {
-	while (*filename && (*filename == '.' || ft_ispunct(*filename)))
-		filename++;
-
-	return filename;
+	if (entry_a->stats.st_mtim.tv_sec < entry_b->stats.st_mtim.tv_sec)
+		return 1;
+	else if (entry_a->stats.st_mtim.tv_sec > entry_b->stats.st_mtim.tv_sec)
+		return -1;
+	else
+	{
+		if (entry_a->stats.st_mtim.tv_nsec < entry_b->stats.st_mtim.tv_nsec)
+			return 1;
+		else if (entry_a->stats.st_mtim.tv_nsec > entry_b->stats.st_mtim.tv_nsec)
+			return -1;
+		else
+			return compare_by_name(entry_a, entry_b);
+	}
 }
 
-
-int compare_by_name(entry_t *entry_a, entry_t *entry_b)
+int compare_by_time_reverse(entry_t *entry_a, entry_t *entry_b)
 {
-	assert(entry_a != NULL);
-	assert(entry_b != NULL);
-
-
-	if ( ft_strcmp(entry_a->filename, ".") == 0 && strcmp(entry_b->filename, "..") == 0 )
-		return -1;
-
-	if ( ft_strcmp(entry_b->filename, ".") == 0 && strcmp(entry_a->filename, "..") == 0 )
-		return 1;
-
-	if ( ft_strcmp(entry_a->filename, ".") == 0 || strcmp(entry_a->filename, "..") == 0 )
-		return -1;
-
-	if ( ft_strcmp(entry_b->filename, ".") == 0 || strcmp(entry_b->filename, "..") == 0 )
-		return 1;
-
-	const char *parsable_entry_a_filename = skip_heading_punctuation(entry_a->filename);
-	const char *parsable_entry_b_filename = skip_heading_punctuation(entry_b->filename);
-
-	return strcmp(parsable_entry_a_filename, parsable_entry_b_filename);
-
+	return (-compare_by_time_more_precise(entry_a, entry_b));
 }
-
-*/

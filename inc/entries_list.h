@@ -3,6 +3,7 @@
 
 #include <sys/stat.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 typedef struct entry_s entry_t;
 
@@ -14,12 +15,15 @@ typedef struct entry_s
 	struct stat stats;
 	entry_t *prev;
 	entry_t *next;
+	bool full_path_option;
 } entry_t;
 
 typedef struct entry_list_s
 {
 	entry_t *first;
 	entry_t *last;
+	uint64_t directory_size;
+	bool full_path_option;
 } entry_list_t;
 
 void debug_entry_list(entry_list_t *list);
