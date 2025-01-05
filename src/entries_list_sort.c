@@ -13,13 +13,16 @@ bool entries_swap(entry_t *entry_a, entry_t *entry_b)
 
 	char *tmp_full_path = entry_a->full_path;
 	char *tmp_filename = entry_a->filename;
+	char *tmp_printable_filename = entry_a->printable_filename;
 	struct stat tmp_stats = entry_a->stats;
 
 	entry_a->filename = entry_b->filename;
+	entry_a->printable_filename = entry_b->printable_filename;
 	entry_a->full_path = entry_b->full_path;
 	entry_a->stats = entry_b->stats;
 
 	entry_b->filename = tmp_filename;
+	entry_b->printable_filename = tmp_printable_filename;
 	entry_b->full_path = tmp_full_path;
 	entry_b->stats = tmp_stats;
 
