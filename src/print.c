@@ -201,5 +201,5 @@ void print_entries_list(entry_list_t *entries, environment_t *env)
 
 		one_entry = one_entry->next;
 	}
-	stream_cat_end_of_line(env->stream, "");
+	//stream_cat_end_of_line(env->stream, "");
 }

@@ -70,6 +70,8 @@ bool parse_args(environment_t *env, int ac, char **av)
 	else
 		env->multiple_files = true;
 
+	env->first_line = true;
+
 	return true;
 }
 

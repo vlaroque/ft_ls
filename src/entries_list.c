@@ -10,15 +10,6 @@
 #include "print_filename.h"
 #include "libft.h"
 
-bool entry_list_from_path(entry_t **entry_out, char *path)
-{
-	assert(path != NULL);
-	(void)path;
-	(void)entry_out;
-
-	return true;
-}
-
 void debug_entry_list(entry_list_t *list)
 {
 	printf("debugging entry list\n");

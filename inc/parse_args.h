@@ -13,6 +13,7 @@ typedef struct environment_s
 	flags flags;
 	stream_out_t *stream;
 	bool multiple_files;
+	bool first_line;
 } environment_t;
 
 

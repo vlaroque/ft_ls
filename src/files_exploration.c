@@ -93,6 +93,14 @@ void recursive_traversal(char *path, environment_t *env)
 		return;
 	}
 
+	if (env->first_line == true)
+	{
+		env->first_line = false;
+	}
+	else
+		stream_cat_end_of_line(env->stream, "");
+
+	
 	if (env->multiple_files || IS_FLAG_SET(env->flags, L_REC))
 	{
 		stream_cat(env->stream, path);
